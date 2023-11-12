@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load level_design %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -87,16 +88,19 @@
 window.onload = function () {
     {% block onMounted %}
     {% endblock onMounted %}
-    calculateLoggedAccountXPForNextLevel();
-    calculateLoggedAccountXPInHexagonProgress();
+    showLoggedAccountXPProgressBarForNextLevel();
+    showLoggedAccountXPHexagonProgressInAvatarBorder();
 }
 
-function calculateLoggedAccountXPForNextLevel() {
+function showLoggedAccountXPProgressBarForNextLevel() {
     app.plugins.createProgressBar({
         container: '#logged-user-level',
         height: 4,
         gradient: {
-            colors: ['#40d04f', '#d9ff65']
+            colors: [
+                "{{ user.account.level|get_level_color_by_level:0 }}",
+                "{{ user.account.level|get_level_color_by_level:1 }}"
+            ]
         },
         scale: {
             start: 0,
@@ -109,7 +113,7 @@ function calculateLoggedAccountXPForNextLevel() {
     });
 }
 
-function calculateLoggedAccountXPInHexagonProgress() {
+function showLoggedAccountXPHexagonProgressInAvatarBorder() {
     app.plugins.createHexagon({
         container: '.logged-account-hexagon-progress-40-44',
         width: 40,
@@ -118,7 +122,10 @@ function calculateLoggedAccountXPInHexagonProgress() {
         roundedCorners: true,
         roundedCornerRadius: 1,
         gradient: {
-            colors: ['#d9ff65', '#40d04f']
+            colors: [
+                "{{ user.account.level|get_level_color_by_level:1 }}",
+                "{{ user.account.level|get_level_color_by_level:0 }}"
+            ]
         },
         scale: {
             start: 0,
@@ -134,7 +141,10 @@ function calculateLoggedAccountXPInHexagonProgress() {
         lineWidth: 6,
         roundedCorners: true,
         gradient: {
-            colors: ['#d9ff65', '#40d04f']
+            colors: [
+                "{{ user.account.level|get_level_color_by_level:1 }}",
+                "{{ user.account.level|get_level_color_by_level:0 }}"
+            ]
         },
         scale: {
             start: 0,
@@ -143,6 +153,28 @@ function calculateLoggedAccountXPInHexagonProgress() {
         }
     });
 }
+
+{% for color_index in 10|range_list %}
+app.plugins.createHexagon({
+    container: `.account-color-index-{{ color_index }}-hexagon-progress-40-44`,
+    width: 40,
+    height: 44,
+    lineWidth: 3,
+    roundedCorners: true,
+    roundedCornerRadius: 1,
+    gradient: {
+        colors: [
+            "{{ color_index|get_level_color_by_color_index:1 }}",
+            "{{ color_index|get_level_color_by_color_index:0 }}"
+        ]
+    },
+    scale: {
+        start: 0,
+        end: 1,
+        stop: 1
+    }
+});
+{% endfor %}
 </script>
 
 </body>
